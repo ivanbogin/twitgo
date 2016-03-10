@@ -1,13 +1,22 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 )
 
+type Tweet struct {
+	Body string `json:"body"`
+}
+
+var tweets = []Tweet{Tweet{Body: "First tweet"}, Tweet{Body: "Second tweet"}, Tweet{Body: "Third tweet"}}
+
 func TweetsHandler(w http.ResponseWriter, r *http.Request) {
+	enc := json.NewEncoder(w)
+
 	if r.Method == "GET" {
-		fmt.Fprint(w, "get list of tweets")
+		enc.Encode(&tweets)
 		return
 	} else if r.Method == "POST" {
 		fmt.Fprint(w, "create a new tweet")
