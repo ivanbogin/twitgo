@@ -30,7 +30,21 @@ func getTweetsAction(w http.ResponseWriter, r *http.Request) {
 }
 
 func createTweetAction(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "create a new tweet")
+	session, err := mgo.Dial("127.0.0.1")
+	if err != nil {
+		panic(err)
+	}
+	defer session.Close()
+
+	var tweet Tweet
+	json.NewDecoder(r.Body).Decode(&tweet)
+
+	c := session.DB("tweeter").C("tweets")
+	err = c.Insert(&tweet)
+	if err != nil {
+		panic(err)
+	}
+	w.WriteHeader(http.StatusCreated)
 }
 
 func TweetsHandler(w http.ResponseWriter, r *http.Request) {
