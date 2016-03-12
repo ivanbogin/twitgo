@@ -12,16 +12,12 @@ type Tweet struct {
 	Body string `json:"body"`
 }
 
-func getTweetsAction(w http.ResponseWriter, r *http.Request) {
-	session, err := mgo.Dial("127.0.0.1")
-	if err != nil {
-		panic(err)
-	}
-	defer session.Close()
+var mongo mgo.Session
 
+func getTweetsAction(w http.ResponseWriter, r *http.Request) {
 	tweets := []Tweet{}
-	c := session.DB("tweeter").C("tweets")
-	err = c.Find(bson.M{}).All(&tweets)
+	c := mongo.DB("tweeter").C("tweets")
+	err := c.Find(bson.M{}).All(&tweets)
 	if err != nil {
 		panic(err)
 	}
@@ -30,17 +26,11 @@ func getTweetsAction(w http.ResponseWriter, r *http.Request) {
 }
 
 func createTweetAction(w http.ResponseWriter, r *http.Request) {
-	session, err := mgo.Dial("127.0.0.1")
-	if err != nil {
-		panic(err)
-	}
-	defer session.Close()
-
 	var tweet Tweet
 	json.NewDecoder(r.Body).Decode(&tweet)
 
-	c := session.DB("tweeter").C("tweets")
-	err = c.Insert(&tweet)
+	c := mongo.DB("tweeter").C("tweets")
+	err := c.Insert(&tweet)
 	if err != nil {
 		panic(err)
 	}
@@ -59,6 +49,13 @@ func TweetsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	session, err := mgo.Dial("127.0.0.1")
+	if err != nil {
+		panic(err)
+	}
+	mongo = *session
+	defer session.Close()
+
 	http.HandleFunc("/tweets/", TweetsHandler)
 	http.ListenAndServe(":8080", nil)
 }
