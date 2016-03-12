@@ -6,13 +6,19 @@ import (
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 	"net/http"
+	"os"
 )
 
 type Tweet struct {
 	Body string `json:"body"`
 }
 
+type Config struct {
+	MongoUrl string `json:"mongo_url"`
+}
+
 var mongo mgo.Session
+var config Config
 
 func getTweetsAction(w http.ResponseWriter, r *http.Request) {
 	tweets := []Tweet{}
@@ -49,7 +55,14 @@ func TweetsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	session, err := mgo.Dial("127.0.0.1")
+	configFile, err := os.Open("config.json")
+	if err != nil {
+		panic(err)
+	}
+	json.NewDecoder(configFile).Decode(&config)
+	defer configFile.Close()
+
+	session, err := mgo.Dial(config.MongoUrl)
 	if err != nil {
 		panic(err)
 	}
