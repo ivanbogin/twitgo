@@ -67,6 +67,8 @@ func loadConfig(filename string) {
 
 func main() {
 	env := flag.String("env", "production", "Environment")
+	host := flag.String("host", "127.0.0.1", "Host")
+	port := flag.String("port", "8080", "Port")
 	flag.Parse()
 
 	loadConfig("config."+*env+".json")
@@ -80,5 +82,5 @@ func main() {
 
 	http.HandleFunc("/tweets/", TweetsHandler)
 
-	log.Fatal(http.ListenAndServe(os.Args[1], nil))
+	log.Fatal(http.ListenAndServe(*host+":"+*port, nil))
 }
