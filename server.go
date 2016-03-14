@@ -7,6 +7,7 @@ import (
 	"gopkg.in/mgo.v2/bson"
 	"net/http"
 	"os"
+	"log"
 )
 
 type Tweet struct {
@@ -70,5 +71,6 @@ func main() {
 	defer session.Close()
 
 	http.HandleFunc("/tweets/", TweetsHandler)
-	http.ListenAndServe(":8080", nil)
+
+	log.Fatal(http.ListenAndServe(os.Args[1], nil))
 }
