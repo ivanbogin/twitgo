@@ -2,4 +2,5 @@ config.json
 Gemfile.lock
 data/db/*
 *.pid
+config.*.json
 !.gitkeep

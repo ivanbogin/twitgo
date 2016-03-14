@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"log"
+	"flag"
 )
 
 type Tweet struct {
@@ -55,13 +56,20 @@ func TweetsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func main() {
-	configFile, err := os.Open("config.json")
+func loadConfig(filename string) {
+	configFile, err := os.Open(filename)
 	if err != nil {
 		panic(err)
 	}
 	json.NewDecoder(configFile).Decode(&config)
-	defer configFile.Close()
+	configFile.Close()
+}
+
+func main() {
+	env := flag.String("env", "production", "Environment")
+	flag.Parse()
+
+	loadConfig("config."+*env+".json")
 
 	session, err := mgo.Dial(config.MongoUrl)
 	if err != nil {
