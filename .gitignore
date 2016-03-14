@@ -1,2 +1,5 @@
 config.json
 Gemfile.lock
+data/db/*
+*.pid
+!.gitkeep

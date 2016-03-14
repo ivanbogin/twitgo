@@ -1,4 +1,4 @@
-Feature: Listing tweets
+Feature: List tweets
 
   Scenario: Get JSON list of tweets sorted by date descending
     Given the system knows about the following tweets:
