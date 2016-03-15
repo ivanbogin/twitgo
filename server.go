@@ -13,18 +13,21 @@ import (
 
 type Tweet struct {
 	Body string `json:"body"`
+	CreatedAt string `json:"created_at"`
 }
 
 type Config struct {
 	MongoUrl string `json:"mongo_url"`
+	MongoDb string `json:"mongo_db"`
 }
 
 var mongo mgo.Session
+var mongodb mgo.Database
 var config Config
 
 func getTweetsAction(w http.ResponseWriter, r *http.Request) {
 	tweets := []Tweet{}
-	c := mongo.DB("tweeter").C("tweets")
+	c := mongodb.C("tweets")
 	err := c.Find(bson.M{}).All(&tweets)
 	if err != nil {
 		panic(err)
@@ -37,7 +40,7 @@ func createTweetAction(w http.ResponseWriter, r *http.Request) {
 	var tweet Tweet
 	json.NewDecoder(r.Body).Decode(&tweet)
 
-	c := mongo.DB("tweeter").C("tweets")
+	c := mongodb.C("tweets")
 	err := c.Insert(&tweet)
 	if err != nil {
 		panic(err)
@@ -78,6 +81,7 @@ func main() {
 		panic(err)
 	}
 	mongo = *session
+	mongodb = *session.DB(config.MongoDb)
 	defer session.Close()
 
 	http.HandleFunc("/tweets/", TweetsHandler)

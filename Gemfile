@@ -7,5 +7,6 @@ gem 'mongoid'
 
 group :test do
   gem 'cucumber'
-  gem 'database_cleaner'
+  gem 'httparty'
+  gem 'rspec'
 end

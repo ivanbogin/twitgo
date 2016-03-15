@@ -1,6 +1,6 @@
 development:
-  sessions:
+  clients:
     default:
       database: tweeter_test
       hosts:
-        - localhost:27017
+        - 127.0.0.1:27017
