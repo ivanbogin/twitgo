@@ -1,8 +1,5 @@
-require 'mongoid'
-
-Mongoid.load!('./config/mongoid.yml', :development)
-
 # Cleanup database first
 Before do
-  Tweet.delete_all
+  client = Mongo::Client.new(['127.0.0.1:27017'], :database => 'tweeter_test')
+  client[:tweets].drop
 end

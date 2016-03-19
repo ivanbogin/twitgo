@@ -1,8 +1,13 @@
 require 'httparty'
+require 'mongo'
 
 Given(/^the system knows about the following tweets:$/) do |tweets|
+  @mongo = Mongo::Client.new(['127.0.0.1:27017'], :database => 'tweeter_test')
   tweets.hashes.each do |m|
-    Tweet.create(m)
+    @mongo[:tweets].insert_one({
+      body: m[:body],
+      created_at: DateTime.parse(m[:created_at])
+    })
   end
 end
 

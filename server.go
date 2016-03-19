@@ -4,16 +4,16 @@ import (
 	"encoding/json"
 	"fmt"
 	"gopkg.in/mgo.v2"
-	"gopkg.in/mgo.v2/bson"
 	"net/http"
 	"os"
 	"log"
 	"flag"
+	"time"
 )
 
 type Tweet struct {
 	Body string `json:"body"`
-	CreatedAt string `json:"created_at"`
+	CreatedAt time.Time `json:"created_at" bson:"created_at"`
 }
 
 type Config struct {
@@ -28,7 +28,7 @@ var config Config
 func getTweetsAction(w http.ResponseWriter, r *http.Request) {
 	tweets := []Tweet{}
 	c := mongodb.C("tweets")
-	err := c.Find(bson.M{}).All(&tweets)
+	err := c.Find(nil).Sort("-created_at").All(&tweets)
 	if err != nil {
 		panic(err)
 	}
